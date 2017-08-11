@@ -1,7 +1,35 @@
 <template>
   <div class="istar">
   <h1>Welcome to I* Modeling</h1>
-  <button @click="test">oioioi</button>
+  <Button-group size="large">
+    <Button @click="exportSVG" type="ghost">Exportar SVG</Button>
+    <Button @click="loadExport" type="ghost">Exportar JSON</Button>
+    <Button @click="modal6 = true" type="ghost">Importar JSON</Button>
+  </Button-group>
+  <Modal
+        v-model="modal6"
+        title="Importar JSON"
+        :loading="loading"
+        @on-ok="asyncOK">
+        <Form :model="formItem">
+          <Form-item>
+            <Input v-model="formItem.json" type="textarea" :autosize="{minRows: 8,maxRows: 15}" placeholder="Cole aqui o seu JSON..."></Input>
+          </Form-item>
+        </Form>
+    </Modal>
+
+    <Modal
+          v-model="modalExport"
+          title="JSON"
+          @on-cancel="close"
+          @on-ok="close">
+          <Form :model="formItem">
+            <Form-item>
+              <Input v-model="json" type="textarea" :autosize="{minRows: 8,maxRows: 15}" readonly="true"></Input>
+            </Form-item>
+          </Form>
+      </Modal>
+
   <div style="width:100%; white-space:nowrap;">
     <span style="display: inline-block; horizontal-align: top; width:100px">
       <center><div id="myPaletteDiv" style="border: solid 1px black; height: 600px;"></div></center>
@@ -22,16 +50,46 @@ export default {
   name: 'istar',
   data () {
     return {
+      formItem: {
+        json: '',
+      },
+      image: '',
+      json: '',
       msg: 'Welcome to Your Vue.js App',
       $: null,
       diagram: null,
-      linkType: null
+      linkType: null,
+      modal6: false,
+      modalExport: false,
+      loading: true
     }
   },
   methods: {
     test () {
       this.diagram.linkTemplate =
       alert('oi')
+    },
+    asyncOK () {
+      console.log('oi');
+      this.diagram.model =go.Model.fromJson(this.formItem.json)
+      this.formItem.json = ''
+      setTimeout(() => {
+        this.modal6 = false;
+      }, 2000);
+    },
+    close () {
+      this.json = ''
+      this.modalExport = false;
+    },
+    exportSVG () {
+      var x = this.diagram.makeImage()
+      console.log(x);
+      this.image = x
+      // document.location = this.diagram.makeImage()
+    },
+    loadExport () {
+      this.json = this.diagram.model.toJson()
+      this.modalExport = true;
     },
   },
   mounted () {
