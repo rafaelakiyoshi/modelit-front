@@ -1,15 +1,13 @@
 <template>
   <div class="hello">
-  <Button>Default</Button>
-   <Button type="primary">Primary</Button>
-   <Button type="ghost">Ghost</Button>
-   <Button type="dashed">Dashed</Button>
-   <Button type="text">Text</Button>
-   <br><br>
-   <Button type="info">信息按钮</Button>
-   <Button type="success">成功按钮</Button>
-   <Button type="warning">警告按钮</Button>
-   <Button type="error">错误按钮</Button>
+     <p class="script"><span>ModelIT</span></p>
+     <h3 class="sub"> Modele seu software colaborativamente! </h3>
+
+    <Button-group size="large" shape="circle">
+        <Button type="info">Modelar i*</Button>
+        <Button type="info">Modelar NFR</Button>
+        <Button type="info">Modelar D. Classes</Button>
+    </Button-group>
   </div>
 </template>
 
@@ -26,8 +24,39 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
-  font-weight: normal;
+@import url(https://fonts.googleapis.com/css?family=Bangers);
+.script {
+  font-family: 'Bangers', cursive;
+  color: #fff;
+  text-shadow: 2px 2px #5cadff;
+  font-size: 150px;
+  position: relative;
+  margin-bottom: -50px;
+}
+.sub {
+  font-family: "Lucida Grande", Tahoma;
+ font-size: 20px;
+ font-weight: lighter;
+ font-variant: normal;
+ text-transform: uppercase;
+ color: white;
+ text-shadow: 1px 1px #5cadff;
+        margin-top: 10px;
+ text-align: center!important;
+ letter-spacing: 0.3em;
+}
+
+#app {
+    /* The image used */
+    background-image: url("img_girl.jpg");
+
+    /* Full height */
+    height: 100%;
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 ul {
