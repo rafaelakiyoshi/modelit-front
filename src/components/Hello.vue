@@ -4,19 +4,25 @@
      <h3 class="sub"> Modele seu software colaborativamente! </h3>
 
     <Button-group size="large" shape="circle">
-        <Button type="info">Modelar i*</Button>
-        <Button type="info">Modelar NFR</Button>
-        <Button type="info">Modelar D. Classes</Button>
+        <Button @click="redirect('/istar')"href="/istar" type="info">Modelar i*</Button>
+        <Button type="info" disabled>Modelar NFR(INDISPONÍVEL)</Button>
+        <Button type="info" disabled>Modelar D. Classes(INDISPONÍVEL)</Button>
     </Button-group>
   </div>
 </template>
 
 <script>
+import router from '../router'
 export default {
   name: 'hello',
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'
+    }
+  },
+  methods: {
+    redirect (path) {
+      router.push(path)
     }
   }
 }
@@ -24,11 +30,16 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+body  {
+    background-image: url("img_girl.jpg");
+    background-color: #cccccc;
+}
+
 @import url(https://fonts.googleapis.com/css?family=Bangers);
 .script {
   font-family: 'Bangers', cursive;
   color: #fff;
-  text-shadow: 2px 2px #5cadff;
+  text-shadow: 2px 2px black;
   font-size: 150px;
   position: relative;
   margin-bottom: -50px;
@@ -40,7 +51,7 @@ export default {
  font-variant: normal;
  text-transform: uppercase;
  color: white;
- text-shadow: 1px 1px #5cadff;
+ text-shadow: 1px 1px black;
         margin-top: 10px;
  text-align: center!important;
  letter-spacing: 0.3em;

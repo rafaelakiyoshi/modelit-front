@@ -15,6 +15,7 @@ export default new Router({
     },
     {
       path: '/istar',
+      name: 'istar',
       component: IStar
     }
   ]
