@@ -29,7 +29,7 @@
             </Form-item>
           </Form>
       </Modal>
-
+<div id="SVGArea"></div>
   <div style="width:100%; white-space:nowrap;">
     <span style="display: inline-block; horizontal-align: top; width:100px">
       <center><div id="myPaletteDiv" style="border: solid 1px black; height: 600px;"></div></center>
@@ -82,9 +82,14 @@ export default {
       this.modalExport = false;
     },
     exportSVG () {
-      var x = this.diagram.makeImage()
+      var x = this.diagram.makeSvg()
       console.log(x);
       this.image = x
+      var obj = document.getElementById("SVGArea");
+      obj.appendChild(x);
+      if (obj.children.length > 0) {
+        obj.replaceChild(x, obj.children[0]);
+      }
       // document.location = this.diagram.makeImage()
     },
     loadExport () {
@@ -219,6 +224,7 @@ export default {
 
     var quality =
       $(go.Node, "Spot",
+       new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
       { resizable: true, resizeObjectName: "SHAPE",  // resize the Shape, not the Node
       selectionAdornmentTemplate: AdornmentDefault,
       selectionObjectName: "SHAPE",
@@ -250,6 +256,7 @@ export default {
 
     var task =
       $(go.Node, "Spot",
+       new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
       { resizable: true, resizeObjectName: "SHAPE",  // resize the Shape, not the Node
       selectionAdornmentTemplate: AdornmentDefault,
       selectionObjectName: "SHAPE",
@@ -279,6 +286,7 @@ export default {
 
       var goal =
         $(go.Node, "Spot",
+         new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
         { resizable: true, resizeObjectName: "SHAPE",  // resize the Shape, not the Node
         selectionAdornmentTemplate: AdornmentDefault,
         selectionObjectName: "SHAPE",
@@ -309,6 +317,7 @@ export default {
 
     var resource =
       $(go.Node, "Spot",
+       new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
       { resizable: true, resizeObjectName: "SHAPE",  // resize the Shape, not the Node
       selectionAdornmentTemplate: AdornmentDefault,
       selectionObjectName: "SHAPE",
@@ -390,7 +399,9 @@ export default {
 
 
     diagram.groupTemplateMap.add("actor",
-    $(go.Group, "Vertical", {
+    $(go.Group, "Vertical",
+     new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+    {
       resizable: true, resizeObjectName: "SHAPE", selectionObjectName: "SHAPE",
       selectionAdornmentTemplate: AdornmentDefault,
       handlesDragDropForMembers: true,
