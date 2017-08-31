@@ -1,8 +1,7 @@
 <template>
   <div class="istar">
-  <h1>Welcome to I* Modeling</h1>
   <Button-group size="large">
-    <Button @click="exportSVG" type="ghost">Exportar SVG</Button>
+    <Button @click="exportSVG" type="ghost" disabled>Exportar SVG</Button>
     <Button @click="loadExport" type="ghost">Exportar JSON</Button>
     <Button @click="modal6 = true" type="ghost">Importar JSON</Button>
   </Button-group>
@@ -25,19 +24,15 @@
           @on-ok="close">
           <Form :model="formItem">
             <Form-item>
-              <Input v-model="json" type="textarea" :autosize="{minRows: 8,maxRows: 15}" readonly="true"></Input>
+              <Input v-model="json" type="textarea" :autosize="{minRows: 8,maxRows: 15}" readonly></Input>
             </Form-item>
           </Form>
       </Modal>
 <div id="SVGArea"></div>
   <div style="width:100%; white-space:nowrap;">
-    <span style="display: inline-block; horizontal-align: top; width:100px">
-      <center><div id="myPaletteDiv" style="border: solid 1px black; height: 600px;"></div></center>
-    </span>
-
-    <span style="display: inline-block; vertical-align: top; width:80%">
-      <div id="myDiagramDiv" style="border: solid 1px black; height: 600px"></div>
-    </span>
+    <div id="myPaletteDiv" style="border: solid 1px black; width: 100%; height: 90px"></div>
+  <div id="myDiagramDiv" style="border: solid 1px black; width: 100%; height: 500px; margin-top: 3px"></div>
+  <div id="description">
   </div>
   </div></center>
   </div>
@@ -109,13 +104,6 @@ export default {
     var $ = this.$
     var linkType = this.linkType
     diagram.initialContentAlignment = go.Spot.Center;
-
-    diagram.toolManager.linkingTool.temporaryLink =
-    $(go.Link,
-      { layerName: "Tool" },
-      $(go.Shape,
-        { stroke: "red", strokeWidth: 2, strokeDashArray: [4, 2] })
-      );
 
   var AdornmentDefault =
   $(go.Adornment, "Vertical",
@@ -200,28 +188,6 @@ export default {
   )
 );
 
-  var tempfromnode =
-  $(go.Node,
-    { layerName: "Tool" },
-    $(go.Shape, "RoundedRectangle",
-    { stroke: "chartreuse", strokeWidth: 3, fill: null,
-    portId: "", width: 1, height: 1 })
-  );
-  diagram.toolManager.linkingTool.temporaryFromNode = tempfromnode;
-  diagram.toolManager.linkingTool.temporaryFromPort = tempfromnode.port;
-
-  var temptonode =
-  $(go.Node,
-    { layerName: "Tool" },
-    $(go.Shape, "RoundedRectangle",
-    { stroke: "cyan", strokeWidth: 3, fill: null,
-    portId: "", width: 1, height: 1 })
-  );
-  diagram.toolManager.linkingTool.temporaryToNode = temptonode;
-  diagram.toolManager.linkingTool.temporaryToPort = temptonode.port;
-
-
-
     var quality =
       $(go.Node, "Spot",
        new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
@@ -250,8 +216,10 @@ export default {
       toLinkableDuplicates: true,
       cursor: "pointer",
       fill: "rgb(193,255,193)",width: 80, height: 40, maxSize: new go.Size(110, 60), minSize: new go.Size(70, 30)}),
-      $(go.TextBlock, {editable: true, stroke: "blue", wrap: go.TextBlock.WrapFit, font: "9pt serif",wrap: go.TextBlock.WrapFit, textAlign: "center", text: "Quality" })
-    );
+      $(go.TextBlock, {editable: true, stroke: "blue", wrap: go.TextBlock.WrapFit, font: "9pt serif",wrap: go.TextBlock.WrapFit, textAlign: "center", text: "Quality" },
+      new go.Binding("text").makeTwoWay()
+      )
+      );
 
 
     var task =
@@ -281,7 +249,9 @@ export default {
           toLinkableDuplicates: true,
           cursor: "pointer",
           fill: "rgb(193,255,193)",width: 80, height: 40, maxSize: new go.Size(110, 60), minSize: new go.Size(70, 30)}),
-          $(go.TextBlock, {editable: true, stroke: "blue", wrap: go.TextBlock.WrapFit, font: "9pt serif", textAlign: "center", text: "Task" })
+          $(go.TextBlock, {editable: true, stroke: "blue", wrap: go.TextBlock.WrapFit, font: "9pt serif", textAlign: "center", text: "Task" },
+          new go.Binding("text").makeTwoWay()
+        )
         );
 
       var goal =
@@ -312,7 +282,9 @@ export default {
             toLinkableDuplicates: true,
             cursor: "pointer",
             fill: "rgb(193,255,193)",width: 80, height: 40, maxSize: new go.Size(110, 60), minSize: new go.Size(70, 30)}),
-            $(go.TextBlock, {editable: true, stroke: "blue", wrap: go.TextBlock.WrapFit, font: "9pt serif", textAlign: "center", text: "Goal" })
+            $(go.TextBlock, {editable: true, stroke: "blue", wrap: go.TextBlock.WrapFit, font: "9pt serif", textAlign: "center", text: "Goal" },
+            new go.Binding("text").makeTwoWay()
+          )
           );
 
     var resource =
@@ -342,7 +314,9 @@ export default {
           toLinkableDuplicates: true,
           cursor: "pointer",
           fill: "rgb(193,255,193)",width: 70, height: 40, maxSize: new go.Size(80, 50), minSize: new go.Size(60, 30)}),
-          $(go.TextBlock, {editable: true, stroke: "blue", wrap: go.TextBlock.WrapFit, font: "9pt serif", textAlign: "center", text: "Resource" })
+          $(go.TextBlock, {editable: true, stroke: "blue", wrap: go.TextBlock.WrapFit, font: "9pt serif", textAlign: "center", text: "Resource" },
+          new go.Binding("text").makeTwoWay()
+        )
         );
 
 
@@ -367,7 +341,7 @@ export default {
         { fill: $(go.Brush, "Radial", { 0: "rgb(240, 240, 240)", 0.1: "rgb(240, 240, 240)", 0.5: "rgba(240, 240, 240, 0)" }),
         stroke: null }),
         $(go.TextBlock, {editable: true, stroke: "blue", text: "link", segmentOffset: new go.Point(0, 0),
-            segmentOrientation: go.Link.OrientUpright })
+            segmentOrientation: go.Link.OrientUpright }, new go.Binding("text").makeTwoWay())
       ));
 
     diagram.linkTemplateMap.add("--o",
@@ -432,12 +406,8 @@ export default {
         }
     },
     $(go.Panel, "Spot",
-    // { resizable: true, resizeObjectName: "SHAPE",  // resize the Shape, not the Node
-    //       selectionObjectName: "SHAPE" },
       $(go.Shape,
-        // { resizable: true },
           { name: "SHAPE", geometryString: "F M0,0 a30,30 0 1,0 60,5a30,30 0 1,0 -60,0z",
-        alignment: go.Spot.Right,
         strokeWidth: 1,
         portId: "",
         fromLinkable: true,
@@ -449,22 +419,10 @@ export default {
         fill: "rgb(193,255,193)",width: 60, height: 60, maxSize: new go.Size(80, 80), minSize: new go.Size(50, 50)},
         new go.Binding("geometryString", "path")),
         $(go.TextBlock, {editable: true, stroke: "blue", wrap: go.TextBlock.WrapFit, font: "9pt serif", textAlign: "center"},
-        new go.Binding("text", "text")
+        new go.Binding("text", "text").makeTwoWay()
       ),
-      {
-        contextMenu:                            // define a context menu for each node
-          $(go.Adornment, "Vertical",        // that has several buttons around
-            $(go.Placeholder),  // a Placeholder object
-            $("ContextMenuButton", $(go.TextBlock, "Actor"),
-              { click: this.test }),
-            $("ContextMenuButton", $(go.TextBlock, "Agent"),
-            { click: this.test }),
-            $("ContextMenuButton", $(go.TextBlock, "Role"),
-              { click: this.test })
-          )  // end Adornment
-      },
     $("SubGraphExpanderButton", {alignment: go.Spot.TopRight })),
-      $(go.Panel, "Auto",
+      $(go.Panel, "Auto", {alignment: go.Spot.Bottom },
       $(go.Shape, "Ellipse", {fill: "lightgray", cursor: "pointer", fromLinkable: true, toLinkable: true,
       fromLinkableDuplicates: true, toLinkableDuplicates: true, strokeWidth: 1,
                     strokeDashArray: [6, 6, 6, 6]}),
@@ -493,6 +451,7 @@ export default {
           var myPalette =
           $(go.Palette, "myPaletteDiv",  // must name or refer to the DIV HTML element
               {
+                layout: $(go.GridLayout, { alignment: go.GridLayout.LeftToRight }),
                 "animationManager.duration": 800, // slightly longer than default (600ms) animation
                 nodeTemplateMap: diagram.nodeTemplateMap,  // share the templates used by myDiagram
                 groupTemplateMap: diagram.groupTemplateMap,

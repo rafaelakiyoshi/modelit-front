@@ -8,6 +8,7 @@
         <Button type="info" disabled>Modelar NFR(INDISPONÍVEL)</Button>
         <Button type="info" disabled>Modelar D. Classes(INDISPONÍVEL)</Button>
     </Button-group>
+    <div style="height: 370px"></div>
   </div>
 </template>
 
@@ -30,14 +31,17 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-body  {
-    background-image: url("img_girl.jpg");
-    background-color: #cccccc;
+.hello {
+  background: url('img_girl.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  height: 100%;
 }
-
-@import url(https://fonts.googleapis.com/css?family=Bangers);
+@import url(https://fonts.googleapis.com/css?family=Saira+Semi+Condensed);
 .script {
-  font-family: 'Bangers', cursive;
+  font-family: 'Saira Semi Condensed', cursive;
   color: #fff;
   text-shadow: 2px 2px black;
   font-size: 150px;
@@ -57,18 +61,6 @@ body  {
  letter-spacing: 0.3em;
 }
 
-#app {
-    /* The image used */
-    background-image: url("img_girl.jpg");
-
-    /* Full height */
-    height: 100%;
-
-    /* Center and scale the image nicely */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
 
 ul {
   list-style-type: none;
