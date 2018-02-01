@@ -31,7 +31,7 @@
 <div id="SVGArea"></div>
   <div style="width:100%; white-space:nowrap;">
     <div id="myPaletteDiv" style="border: solid 1px black; width: 100%; height: 90px"></div>
-  <div id="myDiagramDiv" style="border: solid 1px black; width: 100%; height: 500px; margin-top: 3px"></div>
+  <div id="myDiagramDiv" style="border: solid 1px black; width: 100%; height: 700px; margin-top: 3px"></div>
   <div id="description">
   </div>
   </div></center>
@@ -438,8 +438,6 @@ export default {
             if (shape) shape.fill = "rgb(193,255,193)";
           } }));
 
-
-
           var templmap = new go.Map("string", go.Node);
           templmap.add("quality", quality);
           templmap.add("task", task);
@@ -473,7 +471,6 @@ export default {
                 diagram.model.setDataProperty(link.data, "category", linkType);
                 diagram.commitTransaction("add link data");
                 linkType = ""
-
               });
 
     }

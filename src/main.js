@@ -6,6 +6,7 @@ import router from './router'
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
 import locale from 'iview/src/locale/lang/en-US'
+import store from './store/index'
 
 Vue.use(iView, { locale })
 
@@ -16,6 +17,7 @@ new Vue({
   el: '#app',
   router,
   template: '<App/>',
-  components: { App }
+  components: { App },
+  store
 })
 router.start(App, '#container')
