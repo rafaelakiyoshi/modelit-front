@@ -5,6 +5,14 @@
     <Button @click="loadExport" type="ghost">Exportar JSON</Button>
     <Button @click="modal6 = true" type="ghost">Importar JSON</Button>
   </Button-group>
+  <Row>
+        <Col span="18" push="6">
+          <Input v-model="desc" size="large" placeholder="Descrição do Diagrama"></Input>
+        </Col>
+        <Col span="6" pull="18">
+          <Input v-model="titulo" size="large" placeholder="Título do Diagrama"></Input>
+        </Col>
+    </Row>
   <Modal
         v-model="modal6"
         title="Importar JSON"
@@ -31,10 +39,15 @@
 <div id="SVGArea"></div>
   <div style="width:100%; white-space:nowrap;">
     <div id="myPaletteDiv" style="border: solid 1px black; width: 100%; height: 90px"></div>
-  <div id="myDiagramDiv" style="border: solid 1px black; width: 100%; height: 700px; margin-top: 3px"></div>
+  <div id="myDiagramDiv" style="border: solid 1px black; width: 100%; height: 600px; margin-top: 3px"></div>
   <div id="description">
   </div>
   </div></center>
+   <Row>
+        <Col span="6" offset="4"><Button @click="saveDiagram()" type="success" long>Salvar</Button></Col>
+        <Col span="6" offset="4"><Button type="success" long>Gerar Código</Button></Col>
+    </Row>
+  
   </div>
 </template>
 
@@ -56,10 +69,20 @@ export default {
       linkType: null,
       modal6: false,
       modalExport: false,
-      loading: true
+      loading: true,
+      titulo: '',
+      desc: ''
     }
   },
   methods: {
+    saveDiagram() {
+      let diagram = {
+        title: this.titulo,
+        desc: this.desc,
+        diagram: this.diagram.model.toJson()
+      }
+      console.log(this.$store.getters.returnUser, diagram)
+    },
     test () {
       this.diagram.linkTemplate =
       alert('oi')

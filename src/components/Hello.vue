@@ -4,9 +4,8 @@
      <h3 class="sub"> Modele seu software colaborativamente! </h3>
 
     <Button-group size="large" shape="circle">
-        <Button @click="redirect('/istar')"href="/istar" type="info">Modelar i*</Button>
-        <Button type="info" disabled>Modelar NFR(INDISPONÍVEL)</Button>
-        <Button type="info" disabled>Modelar D. Classes(INDISPONÍVEL)</Button>
+        <Button @click="redirect('/istar')"href="/istar" type="info">Novo Diagrama i*</Button>
+        <Button type="info" disabled>Meus Diagramas</Button>
     </Button-group>
     <div style="height: 370px"></div>
   </div>

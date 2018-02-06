@@ -1,6 +1,7 @@
 <template>
     <div id="login">
-      <img src="../assets/logo.png">
+       <Card>
+      <img slot="title" src="../assets/logo.png">
         <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
         <FormItem prop="user">
             <Input type="text" v-model="formInline.user" placeholder="Email..." style="width: 300px">
@@ -19,6 +20,7 @@
         </FormItem>
     </Form>
          <Spin size="large" fix v-if="spinShow"></Spin>
+            </Card>
     </div>
 </template>
 <script>
@@ -69,17 +71,21 @@ export default {
         }
       })
       .done((res) => {
-        if(res[0].password == this.formInline.password){
-          let user = {
-            user: {
-              email: res[0].email,
-              nickname: res[0].nickname,
-              id: res[0].id
+        if(res[0].password){
+          if(res[0].password == this.formInline.password){
+            let user = {
+              user: {
+                email: res[0].email,
+                nickname: res[0].nickname,
+                id: res[0].id
+              }
             }
+            this.$store.state.user.email = res[0].email
+            this.$store.commit('SET_USER', user)
+            this.$router.push('/dashboard')
+          } else {
+            this.confirm()
           }
-          this.$store.state.user.email = res[0].email
-          this.$store.commit('SET_USER', user)
-          this.$router.push('/dashboard')
         } else {
           this.confirm()
         }

@@ -2,10 +2,10 @@
   <div id="app">
        <div v-if="isStore()" class="app-ceiling">
            <div class="app-ceiling-main">
-               <a href="/">Início</a> |
-               <a href="/istar">Meus Diagramas</a> |
-               <a href="/istar">Novo Diagrama</a> |
-               <a href="#">Logout</a>
+               <a @click="router('/dashboard')">Início</a> |
+               <a @click="router('/dashboard')">Meus Diagramas</a> |
+               <a @click="router('/istar')">Novo Diagrama</a> |
+               <a @click="logout()">Logout</a>
            </div>
        </div>
        <div class="app-header">
@@ -24,15 +24,29 @@
 <script>
 export default {
   name: "app",
-
+vuex: {
+    getters: {
+      user: store => store.user
+    },
+    actions: {
+      clearUser ({dispatch}) {
+        dispatch('CLEAR_USER')
+      }
+    }
+  },
   methods: {
+    router(router){
+      this.$router.push(router)
+    },
     isStore() {
-        console.log('deded', this.$store.getters.returnUser.email)
         if(this.$store.getters.returnUser.email != ""){
             return true;
         } else {
             return false;
         }
+    }, logout() {
+      this.$store.commit('CLEAR_USER')
+      this.$router.push('/')
     }
   }
 };
