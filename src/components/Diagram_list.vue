@@ -1,152 +1,62 @@
 <template>
-  <div class="istar">
-  <Button-group size="large">
-    <Button @click="exportSVG" type="ghost" disabled>Exportar SVG</Button>
-    <Button @click="loadExport" type="ghost">Exportar JSON</Button>
-    <Button @click="modal6 = true" type="ghost">Importar JSON</Button>
-  </Button-group>
-  <Row>
-        <Col span="18" push="6">
-          <Input v-model="desc" size="large" placeholder="Descrição do Diagrama"></Input>
-        </Col>
-        <Col span="6" pull="18">
-          <Input v-model="titulo" size="large" placeholder="Título do Diagrama"></Input>
+  <div id="diagram_list">
+    <h1> Diagramas de {{this.$store.state.user.nickname}}</h1>
+        <div hidden style="border: solid 0px black; width: 0%; height: 0px; margin-top: 3px" id="myDiagram">
+        </div>
+    <Row type="flex" style="text-align:center vertical-align: middle;">
+        <Col align="center" v-for="(diagram, index) in my_Diagrams" :key="index" span="6" style="text-align:center vertical-align: middle;">
+            <Card align="center" style="width:400px; margin-bottom: 50px;">
+      <p slot="title">{{diagram.title}}</p>
+      <img :src="svg">
+      <p>{{diagram.desc}}</p>
+    </Card>
         </Col>
     </Row>
-  <Modal
-        v-model="modal6"
-        title="Importar JSON"
-        :loading="loading"
-        @on-ok="asyncOK">
-        <Form :model="formItem">
-          <Form-item>
-            <Input v-model="formItem.json" type="textarea" :autosize="{minRows: 8,maxRows: 15}" placeholder="Cole aqui o seu JSON..."></Input>
-          </Form-item>
-        </Form>
-    </Modal>
-
-    <Modal
-          v-model="modalExport"
-          title="JSON"
-          @on-cancel="close"
-          @on-ok="close">
-          <Form :model="formItem">
-            <Form-item>
-              <Input v-model="json" type="textarea" :autosize="{minRows: 8,maxRows: 15}" readonly></Input>
-            </Form-item>
-          </Form>
-      </Modal>
-<div id="SVGArea"></div>
-  <div style="width:100%; white-space:nowrap;">
-    <div id="myPaletteDiv" style="border: solid 1px black; width: 100%; height: 90px"></div>
-  <div id="myDiagramDiv" style="border: solid 1px black; width: 100%; height: 600px; margin-top: 3px"></div>
-  <div id="description">
-  </div>
-  </div></center>
-   <Row>
-        <Col span="6" offset="4"><Button @click="saveDiagram()" type="success" long>Salvar</Button></Col>
-        <Col span="6" offset="4"><Button type="success" long>Gerar Código</Button></Col>
-    </Row>
-  
   </div>
 </template>
 
+
 <script>
 import oboe from 'oboe'
-/*eslint-disable */
 import * as go from 'gojs'
 export default {
-  name: 'istar',
-  data () {
+  name: "diagram_list",
+  data (){
     return {
+      svg: null,
+      $: null,
+      diagram: null,
+      my_Diagrams: null,
       formItem: {
         json: '',
       },
-      image: '',
-      json: '',
-      msg: 'Welcome to Your Vue.js App',
-      $: null,
-      diagram: null,
-      linkType: null,
-      modal6: false,
-      modalExport: false,
-      loading: true,
-      titulo: '',
-      desc: ''
+    }
+  },
+vuex: {
+    getters: {
+      user: store => store.user
+    },
+    actions: {
+      clearUser ({dispatch}) {
+        dispatch('CLEAR_USER')
+      }
     }
   },
   methods: {
-    saveDiagram() {
-      let diagram = {
-        title: this.titulo,
-        desc: this.desc,
-        diagram: this.diagram.model.toJson()
-      }
-      console.log(this.$store.getters.returnUser, diagram)
-      oboe({
-        url: `//localhost:3000/diagram`,
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: {
-          user: this.$store.getters.returnUser,
-          diagram: diagram
-        }
-      })
-      .done((res) => {
-        console.log(res)
-      })
-      .fail((errorReport) => {
-        console.log(errorReport)
-      })
-    },
-    test () {
-      this.diagram.linkTemplate =
-      alert('oi')
-    },
-    asyncOK () {
-      console.log('oi');
-      this.diagram.model =go.Model.fromJson(this.formItem.json)
-      this.formItem.json = ''
-      setTimeout(() => {
-        this.modal6 = false;
-      }, 2000);
-    },
-    close () {
-      this.json = ''
-      this.modalExport = false;
-    },
-    exportSVG () {
-      var x = this.diagram.makeSvg()
-      console.log(x);
-      this.image = x
-      var obj = document.getElementById("SVGArea");
-      obj.appendChild(x);
-      if (obj.children.length > 0) {
-        obj.replaceChild(x, obj.children[0]);
-      }
-      // document.location = this.diagram.makeImage()
-    },
-    loadExport () {
-      this.json = this.diagram.model.toJson()
-      this.modalExport = true;
-    },
+    
   },
-  mounted () {
+  mounted() {
     this.$ = go.GraphObject.make
-    this.diagram = new go.Diagram('myDiagramDiv')
+    this.diagram = new go.Diagram('myDiagram')
     this.diagram.initialContentAlignment = go.Spot.Center
     this.diagram.undoManager.isEnabled = true
     this.diagram.allowDrop = true
     this.diagram.toolManager.mouseWheelBehavior = go.ToolManager.WheelZoom
-    // this.diagram.linkReshapingTool= new CurvedLinkReshapingTool()
     var diagram = this.diagram
     var $ = this.$
     var linkType = this.linkType
     diagram.initialContentAlignment = go.Spot.Center;
-
-  var AdornmentDefault =
+    var AdornmentDefault =
   $(go.Adornment, "Vertical",
   $(go.Panel, "Auto",
     $(go.Shape, { fill: null, stroke: "deepskyblue", strokeWidth: 2 }),
@@ -486,54 +396,29 @@ export default {
           templmap.add("resource", resource);
           templmap.add("", diagram.nodeTemplate);
           diagram.nodeTemplateMap = templmap;
-
-          var myPalette =
-          $(go.Palette, "myPaletteDiv",  // must name or refer to the DIV HTML element
-              {
-                layout: $(go.GridLayout, { alignment: go.GridLayout.LeftToRight }),
-                "animationManager.duration": 800, // slightly longer than default (600ms) animation
-                nodeTemplateMap: diagram.nodeTemplateMap,  // share the templates used by myDiagram
-                groupTemplateMap: diagram.groupTemplateMap,
-                linkTemplateMap: diagram.linkTemplateMap,
-                model: new go.GraphLinksModel([  // specify the contents of the Palette
-                  { category: "resource", key: "resource"},
-                  { category: "task", key: "task"},
-                  { category: "quality", key: "quality"},
-                  { category: "goal", key: "goal"},
-                  { key: "actor", isGroup: true, category: "actor", text: "Actor"},
-                  { key: "role", isGroup: true, category: "actor", text: "Role", path: "F M0,0 a30,30 0 1,0 60,0a30,30 0 1,0 -60,0z, M 0,0 C 0,25   60,25   60,0"},
-                  { key: "agent", isGroup: true, category: "actor", text: "Agent", path: "F M0,0 a30,30 0 1,0 60,5a30,30 0 1,0 -60,0z, M 8,-15 L 52,-15 z"},
-                ])
-              });
-              myPalette.scale = 0.7
-              diagram.addDiagramListener("LinkDrawn", function(e) {
-                var link = e.subject;
-                diagram.startTransaction("add link data");
-                diagram.model.setDataProperty(link.data, "category", linkType);
-                diagram.commitTransaction("add link data");
-                linkType = ""
-              });
-
-    }
-}
+    oboe({
+        url: `//localhost:3000/listdiagrams/${this.$store.state.user.id}`,
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      .done((res) => {
+        this.my_Diagrams = res
+        console.log(this.my_Diagrams[0].diagram)
+        this.diagram.model =go.Model.fromJson(this.my_Diagrams[0].diagram)
+        this.formItem.json = ''
+        this.diagram.isEnabled = false
+        this.svg = this.diagram.makeImage({scale: 0.5, }).getAttribute("src")
+      })
+      .fail((errorReport) => {
+        console.log(errorReport)
+      })
+  }
+};
 </script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h1, h2 {
-  font-weight: normal;
-}
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
 
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
+<style>
 
-a {
-  color: #42b983;
-}
 </style>

@@ -3,7 +3,7 @@
        <div v-if="isStore()" class="app-ceiling">
            <div class="app-ceiling-main">
                <a @click="router('/dashboard')">Início</a> |
-               <a @click="router('/dashboard')">Meus Diagramas</a> |
+               <a @click="router('/mydriagrams')">Meus Diagramas</a> |
                <a @click="router('/istar')">Novo Diagrama</a> |
                <a @click="logout()">Logout</a>
            </div>
