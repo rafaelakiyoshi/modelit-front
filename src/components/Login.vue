@@ -19,11 +19,13 @@
             <Button type="primary" @click="handleSubmit('formInline')" style="width: 300px">Logar</Button>
         </FormItem>
     </Form>
+        <a @click="redirect('/register')">Criar Conta</a>
          <Spin size="large" fix v-if="spinShow"></Spin>
             </Card>
     </div>
 </template>
 <script>
+import router from '../router'
 import oboe from 'oboe'
 export default {
   data () {
@@ -53,6 +55,9 @@ export default {
     }
   },
   methods: {
+    redirect (path) {
+      router.push(path)
+    },
     confirm () {
       this.$Modal.warning({
         title: '<center>Atenção!</center>',

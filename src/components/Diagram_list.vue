@@ -1,16 +1,19 @@
 <template>
   <div id="diagram_list">
-    <h1> Diagramas de {{this.$store.state.user.nickname}}</h1>
         <div hidden style="border: solid 0px black; width: 0%; height: 0px; margin-top: 3px" id="myDiagram">
         </div>
     <Row type="flex" style="text-align:center vertical-align: middle;">
-        <Col align="center" v-for="(diagram, index) in my_Diagrams" :key="index" span="6" style="text-align:center vertical-align: middle;">
-            <Card align="center" style="width:400px; margin-bottom: 50px;">
-      <p slot="title">{{diagram.title}}</p>
-      <img :src="svg">
-      <p>{{diagram.desc}}</p>
-    </Card>
-        </Col>
+      <Col align="center" v-for="(diagram, index) in my_Diagrams" :key="index" span="6" style="text-align:center vertical-align: middle;">
+        <a @click="acessDiagram(diagram)"><Card  align="center" style="width:400px; margin-bottom: 25px; margin-top: 25px;">
+          <h2 style="color:black;" align="left" slot="title">{{diagram.title}}</h2>
+          <p style="color:grey; font-weight:normal;" align="left" slot="title">{{diagram.desc}}</p>
+          <a style="color:red;" href="#" slot="extra" @click.prevent="excludeDiagram(diagram)">
+            <Icon type="trash-a"></Icon>
+            Excluir
+        </a>
+          <img :src="svg[index]">
+        </Card></a>
+      </Col>
     </Row>
   </div>
 </template>
@@ -23,7 +26,7 @@ export default {
   name: "diagram_list",
   data (){
     return {
-      svg: null,
+      svg: [],
       $: null,
       diagram: null,
       my_Diagrams: null,
@@ -43,7 +46,12 @@ vuex: {
     }
   },
   methods: {
-    
+    acessDiagram(diagram){
+      alert('acessing ', diagram)
+    },
+    excludeDiagram(diagram){
+      alert('deleting ',diagram)
+    }
   },
   mounted() {
     this.$ = go.GraphObject.make
@@ -405,11 +413,13 @@ vuex: {
       })
       .done((res) => {
         this.my_Diagrams = res
-        console.log(this.my_Diagrams[0].diagram)
-        this.diagram.model =go.Model.fromJson(this.my_Diagrams[0].diagram)
-        this.formItem.json = ''
-        this.diagram.isEnabled = false
-        this.svg = this.diagram.makeImage({scale: 0.5, }).getAttribute("src")
+        for(var index in this.my_Diagrams){
+          this.diagram.model =go.Model.fromJson(this.my_Diagrams[index].diagram)
+          this.formItem.json = ''
+          this.diagram.isEnabled = false
+          this.svg[index] = this.diagram.makeImage({scale: 0.5, }).getAttribute("src")
+          console.log('HAHAH', this.svg)
+        }
       })
       .fail((errorReport) => {
         console.log(errorReport)
