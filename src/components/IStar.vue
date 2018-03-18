@@ -47,7 +47,7 @@
   </div></center>
    <Row>
         <Col span="6" offset="4"><Button @click="saveDiagram()" type="success" long>Salvar</Button></Col>
-        <Col span="6" offset="4"><Button type="success" long>Gerar Código</Button></Col>
+        <Col span="6" offset="4"><Button @click="generateCode()" type="success" long>Gerar Código</Button></Col>
     </Row>
       <Spin size="large" fix v-if="spinShow"></Spin>
   </div>
@@ -82,6 +82,35 @@ export default {
     };
   },
   methods: {
+    generateCode(){
+      this.spinShow = true;
+      let diagram = {
+        title: this.titulo,
+        desc: this.desc,
+        json: this.diagram.model.toJson(),
+        emailOwner: this.$store.getters.returnUser.email
+      };
+      console.log(this.$store.getters.returnUser, diagram);
+      oboe({
+        url: `/api/code`,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: {
+          user: this.$store.getters.returnUser,
+          diagram: diagram
+        }
+      })
+        .done(res => {
+          this.spinShow = false;
+          this.$Message.success("ok");
+        })
+        .fail(errorReport => {
+          this.spinShow = false;
+          console.log(errorReport);
+        });
+    },
     saveDiagram() {
       this.spinShow = true;
       let diagram = {
@@ -92,7 +121,7 @@ export default {
       };
       console.log(this.$store.getters.returnUser, diagram);
       oboe({
-        url: `https://modelit-db.herokuapp.com/diagram`,
+        url: `/api/diagram`,
         method: "POST",
         headers: {
           "Content-Type": "application/json"
