@@ -1,7 +1,7 @@
 <template>
     <div id="login">
        <Card>
-      <img slot="title" src="../assets/logo.png">
+      <img slot="title" src="../assets/logo2.png" height="250" width="380">
         <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
         <FormItem prop="user">
             <Input type="text" v-model="formInline.user" placeholder="Email..." style="width: 300px">
@@ -68,24 +68,26 @@ export default {
       this.formInline.password = ''
     },
     tryLogin () {
+      console.log('TENTANDO LOGAR')
       oboe({
-        url: `//localhost:3000/user/${this.formInline.user}`,
+        url: `https://modelit-db.herokuapp.com/user/${this.formInline.user}`,
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         }
       })
       .done((res) => {
-        if(res[0].password){
-          if(res[0].password == this.formInline.password){
+        console.log('AEEEEEEEEEEEEE', res)
+        if(res.password){
+          if(res.password == this.formInline.password){
             let user = {
               user: {
-                email: res[0].email,
-                nickname: res[0].nickname,
-                id: res[0].id
+                email: res.email,
+                nickname: res.nickname,
+                id: res.id
               }
             }
-            this.$store.state.user.email = res[0].email
+            this.$store.state.user.email = res.email
             this.$store.commit('SET_USER', user)
             this.$router.push('/dashboard')
           } else {
@@ -94,14 +96,12 @@ export default {
         } else {
           this.confirm()
         }
-        console.log(res)
+        console.log('SASAS', res)
       })
       .fail((errorReport) => {
         this.confirm2()
         console.log(errorReport)
       })
-      console.log(this.formInline.user)
-      console.log(this.formInline.password)
     },
     handleSubmit (name) {
       this.$refs[name].validate(valid => {

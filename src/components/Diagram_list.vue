@@ -15,6 +15,7 @@
         </Card></a>
       </Col>
     </Row>
+    <Spin size="large" fix v-if="spinShow"></Spin>
   </div>
 </template>
 
@@ -28,6 +29,7 @@ export default {
     return {
       svg: [],
       $: null,
+      spinShow: false,
       diagram: null,
       my_Diagrams: null,
       formItem: {
@@ -47,7 +49,7 @@ vuex: {
   },
   methods: {
     acessDiagram(diagram){
-      alert('acessing ', diagram)
+      this.$router.push({name: 'istar', params: {propDiagram:diagram}})
     },
     excludeDiagram(diagram){
       alert('deleting ',diagram)
@@ -405,7 +407,7 @@ vuex: {
           templmap.add("", diagram.nodeTemplate);
           diagram.nodeTemplateMap = templmap;
     oboe({
-        url: `//localhost:3000/listdiagrams/${this.$store.state.user.id}`,
+        url: `https://modelit-db.herokuapp.com/listdiagrams/${this.$store.state.user.email}`,
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -414,10 +416,10 @@ vuex: {
       .done((res) => {
         this.my_Diagrams = res
         for(var index in this.my_Diagrams){
-          this.diagram.model =go.Model.fromJson(this.my_Diagrams[index].diagram)
+          this.diagram.model = go.Model.fromJson(this.my_Diagrams[index].json)
           this.formItem.json = ''
           this.diagram.isEnabled = false
-          this.svg[index] = this.diagram.makeImage({scale: 0.5, }).getAttribute("src")
+          this.svg[index] = this.diagram.makeImage({size: new go.Size(350,100)}).getAttribute("src")
           console.log('HAHAH', this.svg)
         }
       })

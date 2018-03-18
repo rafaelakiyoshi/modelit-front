@@ -29,7 +29,8 @@ export default new Router({
     {
       path: '/istar',
       name: 'istar',
-      component: IStar
+      component: IStar,
+      props: true
     },
     {
       path: '/register',

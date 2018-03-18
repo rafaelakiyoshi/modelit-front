@@ -54,7 +54,7 @@ vuex: {
 
 <style>
 .app {
-  background: url("img_girl.jpg") no-repeat center center fixed;
+  background: url("") no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -86,10 +86,10 @@ vuex: {
 .app-copy {
   text-align: center;
   padding: 0px 0 0px;
-  color: #9ea7b4;
+  color: #77A38C;
 }
 .app-ceiling {
-  background: #464c5b;
+  background: #77A38C;
   padding: 10px 0;
   overflow: hidden;
 }
@@ -98,7 +98,7 @@ vuex: {
   margin-right: 15px;
 }
 .app-ceiling-main a {
-  color: #9ba4b5;
+  color: #ffff;
 }
 body,
 html {
@@ -111,7 +111,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #ffff;
   margin-top: 0px;
   margin-bottom: 0px;
 }

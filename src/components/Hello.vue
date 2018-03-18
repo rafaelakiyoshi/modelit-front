@@ -1,12 +1,8 @@
 <template>
   <div class="hello">
-     <p class="script"><span>ModelIT</span></p>
-     <h3 class="sub"> Modele seu software colaborativamente! </h3>
-
-    <Button-group size="large" shape="circle">
-        <Button @click="redirect('/istar')"href="/istar" type="info">Novo Diagrama i*</Button>
-        <Button type="info" disabled>Meus Diagramas</Button>
-    </Button-group>
+    </br>
+    <img src="./logo.png" alt="Paris" class="center">
+     <h3 class="sub"> Software modeling with goals! </h3>
     <div style="height: 370px"></div>
   </div>
 </template>
@@ -31,7 +27,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .hello {
-  background: url('img_girl.jpg') no-repeat center center fixed;
+  background: url('') no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
