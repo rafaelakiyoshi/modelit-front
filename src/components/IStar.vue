@@ -47,7 +47,7 @@
   </div></center>
    <Row>
         <Col span="6" offset="4"><Button @click="saveDiagram()" type="success" long>Salvar</Button></Col>
-        <Col span="6" offset="4"><Button @click="generateCode()" type="success" long>Gerar Código</Button></Col>
+        <Col span="6" offset="4"><Button @click="generateCode()" type="success" long >Gerar Código</Button></Col>
     </Row>
       <Spin size="large" fix v-if="spinShow"></Spin>
   </div>
@@ -82,6 +82,9 @@ export default {
     };
   },
   methods: {
+    download(){
+      console.log('oioi')
+    },
     generateCode(){
       this.spinShow = true;
       let diagram = {
@@ -95,20 +98,22 @@ export default {
         url: `/api/code`,
         method: "GET",
         headers: {
-          "Content-Type": "application/json"
+            'Content-Type': 'application/zip',
         },
-        body: {
-          user: this.$store.getters.returnUser,
-          diagram: diagram
-        }
       })
         .done(res => {
+          let link = document.createElement('a')
+          link.href = ('/api/code')
+          link.download = 'code'
+          link.click()
+          console.log('aee')
+          window.open('https://www.google.com')
           this.spinShow = false;
-          this.$Message.success("ok");
+          this.$Message.success("Seu código foi gerado com sucesso!");
         })
         .fail(errorReport => {
           this.spinShow = false;
-          console.log(errorReport);
+          console.log('OIA O ERRO: ,',errorReport);
         });
     },
     saveDiagram() {
