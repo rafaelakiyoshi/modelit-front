@@ -47,7 +47,7 @@
   </div></center>
    <Row>
         <Col span="6" offset="4"><Button @click="saveDiagram()" type="success" long>Salvar</Button></Col>
-        <Col span="6" offset="4"><Button @click="generateCode()" type="success" long >Gerar Código</Button></Col>
+        <Col span="6" offset="4"><Button @click="saveDiagram(true)" type="success" long >Gerar Código</Button></Col>
     </Row>
       <Spin size="large" fix v-if="spinShow"></Spin>
   </div>
@@ -62,6 +62,7 @@ export default {
   props: ["propDiagram"],
   data() {
     return {
+      diagramID: null,
       titleEdit: false,
       descEdit: false,
       spinShow: false,
@@ -82,41 +83,34 @@ export default {
     };
   },
   methods: {
-    download(){
-      console.log('oioi')
+    download() {
+      console.log("oioi");
     },
-    generateCode(){
+    generateCode(id) {
       this.spinShow = true;
-      let diagram = {
-        title: this.titulo,
-        desc: this.desc,
-        json: this.diagram.model.toJson(),
-        emailOwner: this.$store.getters.returnUser.email
-      };
-      console.log(this.$store.getters.returnUser, diagram);
+      console.log("ID AQUI", id);
       oboe({
-        url: `/api/code`,
+        url: `/api/code/${id}`,
         method: "GET",
         headers: {
-            'Content-Type': 'application/zip',
-        },
+          "Content-Type": "application/json"
+        }
       })
         .done(res => {
           let link = document.createElement('a')
-          link.href = ('/api/code')
+          link.href = (`/api/code/${id}`)
           link.download = 'code'
           link.click()
-          console.log('aee')
-          window.open('https://www.google.com')
           this.spinShow = false;
           this.$Message.success("Seu código foi gerado com sucesso!");
         })
         .fail(errorReport => {
           this.spinShow = false;
-          console.log('OIA O ERRO: ,',errorReport);
+          console.log("OIA O ERRO: ,", errorReport);
         });
     },
-    saveDiagram() {
+    saveDiagram(generate=false) {
+      var diagramID;
       this.spinShow = true;
       let diagram = {
         title: this.titulo,
@@ -137,8 +131,13 @@ export default {
         }
       })
         .done(res => {
+          console.log(res);
           this.spinShow = false;
           this.$Message.success("Diagrama Salvo!");
+          this.diagramID = res._id;
+          if(generate==true){
+            this.generateCode(this.diagramID)
+          }
         })
         .fail(errorReport => {
           this.spinShow = false;
