@@ -1,20 +1,5 @@
 <template>
   <div class="istar">
-  <!-- <Button-group size="large">
-    <Button @click="exportSVG" type="ghost" disabled>Exportar SVG</Button>
-    <Button @click="loadExport" type="ghost">Exportar JSON</Button>
-    <Button @click="modal6 = true" type="ghost">Importar JSON</Button>
-  </Button-group> -->
-  <Row>
-        <Col span="18" push="6">
-        <h1 v-if="descEdit == false" @click="descEdit=true">{{desc}}</h1>
-          <Input v-if="descEdit" v-model="desc" size="large" placeholder="Descrição do Diagrama"></Input>
-        </Col>
-        <Col span="6" pull="18">
-          <h1 v-if="titleEdit  == false" @click="titleEdit=true" >{{titulo}}</h1>
-          <Input v-if="titleEdit" v-model="titulo" size="large" placeholder="Título do Diagrama"></Input>
-        </Col>
-    </Row>
   <Modal
         v-model="modal6"
         title="Importar JSON"
@@ -41,27 +26,80 @@
 <div id="SVGArea"></div>
   <div @click="titleEdit=false, descEdit=false" style="width:100%; white-space:nowrap;">
     <div id="myPaletteDiv" style="border: solid 1px black; width: 100%; height: 90px"></div>
-  <div id="myDiagramDiv" style="border: solid 1px black; width: 100%; height: 600px; margin-top: 3px"></div>
+   
   <div id="description">
   </div>
-  </div></center>
-   <Row>
-        <Col span="6" offset="4"><Button @click="saveDiagram()" type="success" long>Salvar</Button></Col>
-        <Col span="6" offset="4"><Button @click="saveDiagram(true)" type="success" long >Gerar Código</Button></Col>
-    </Row>
+  </div>
+
+  <div :class="classGrid" v-if="show">
+    <div class="grid-item2" @click="autoUpdate()" id="myDiagramDiv"></div>
+      <div class="grid-item">
+        <div class="grid-container2">
+          <div class="grid-item3"><button @click="changeShowCode(false)" style="height: 100%; width:100%;">{{showCode}}</button></div>
+          <div class="grid-item">
+            <div class="CodeMirror">
+
+              <h4>Modelos</h4>
+              <codemirror class="CodeMirror" v-if="true" style="height: auto; width:100%;" align="left" v-model="codeModels" :options="cmOptions"></codemirror>
+              <h4>Controladoras</h4>
+              <codemirror class="CodeMirror" v-if="true" style="height: auto; width:100%;" align="left" v-model="codeControllers" :options="cmOptions"></codemirror>
+              <Button @click="saveDiagram(true)" type="ghost" style="margin-top:6px" small long >Gerar Código</Button>
+            </div>
+            <!-- <codemirror v-if="true" style="height: auto; width:100%;" align="left" v-model="code" :options="cmOptions"></codemirror> -->
+        </div> 
+      </div>  
+    </div>
+</div>
+
+  <div :class="classGrid" v-if="!show">
+   <div class="grid-item" @click="autoUpdate()" id="myDiagramDiv"></div>
+    <div class="grid-item3">
+      <button @click="changeShowCode(true)" style="height: 100%; width:100%;">{{showCode}}</button>
+      dwdqwdwdw
+      </div>
+  </div>
+<Button @click="saveDiagram()" type="ghost" long>Salvar</Button>
+        <!-- <Col span="6" offset="4"><Button @click="saveDiagram(true)" type="success" long >Gerar Código</Button></Col> -->
+
       <Spin size="large" fix v-if="spinShow"></Spin>
+      
   </div>
 </template>
 
 <script>
 import oboe from "oboe";
 /*eslint-disable */
+import Vue from 'vue'
 import * as go from "gojs";
+import debounce from 'debounce'
+import { codemirror } from 'vue-codemirror'
+// require styles
+import 'codemirror/lib/codemirror.css'
+// language js
+import 'codemirror/mode/python/python.js'
+// theme css
+import 'codemirror/theme/base16-light.css'
 export default {
   name: "istar",
   props: ["propDiagram"],
   data() {
     return {
+      diagramCanvas: '',
+      show: false,
+      showCode: '<',
+      codeModels: '',
+      codeControllers: '',
+      classGrid: 'grid-container-not-show',
+      cmOptions: {
+        // codemirror option
+        height: '800px',
+        tabSize: 4,
+        mode: 'text/x-python',
+        lineNumbers: true,
+        line: true,
+        viewportMargin: Infinity
+        // more codemirror options, 更多 codemirror 的高级配置...
+      },
       diagramID: null,
       titleEdit: false,
       descEdit: false,
@@ -82,36 +120,76 @@ export default {
       desc: "descrição..."
     };
   },
+  components: {
+    codemirror
+  },
   methods: {
-    download() {
-      console.log("oioi");
+    autoUpdate: debounce(function (e) {
+      console.log('aee')
+      var diagram = {
+        json: this.diagram.model.toJson(),
+      };
+      oboe({
+        url: `/api/codetoview`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: {
+          diagram: diagram
+        }
+      })
+        .done(res => {
+          this.codeModels = res.models
+          this.codeControllers = res.controllers
+          console.log('HOHOHO ',res);
+          
+        })
+        .fail(errorReport => {
+          console.log(errorReport);
+        });
+      // this.saveDiagram(true, false)
+    },2000),
+    changeShowCode(show){
+      if(show == true){
+        this.classGrid = 'grid-container-show'
+        this.showCode = '>'
+        this.show = true
+      } else {
+        this.classGrid = 'grid-container-not-show'
+        this.showCode = '<'
+        this.show = false
+      }
     },
-    generateCode(id) {
-      this.spinShow = true;
+    generateCode(id, download, url='code') {
+      console.log('SAVEDIgenerateCodeAGRAM: ', id, download, url)
       console.log("ID AQUI", id);
       oboe({
-        url: `/api/code/${id}`,
+        url: `/api/${url}/${id}`,
         method: "GET",
         headers: {
           "Content-Type": "application/json"
         }
       })
         .done(res => {
-          let link = document.createElement('a')
-          link.href = (`/api/code/${id}`)
-          link.download = 'code'
-          link.click()
-          this.spinShow = false;
-          this.$Message.success("Seu código foi gerado com sucesso!");
+          if(download==true){
+            let link = document.createElement('a')
+            link.href = (`/api/code/${id}`)
+            link.download = 'code'
+            link.click()
+          } else {
+            this.codeModels = res.message
+            console.log(res)
+          }
+          
         })
         .fail(errorReport => {
-          this.spinShow = false;
           console.log("OIA O ERRO: ,", errorReport);
         });
     },
-    saveDiagram(generate=false) {
+    saveDiagram(generate=false, download) {
+      console.log('SAVEDIAGRAM: ', generate, download)
       var diagramID;
-      this.spinShow = true;
       let diagram = {
         title: this.titulo,
         desc: this.desc,
@@ -132,15 +210,17 @@ export default {
       })
         .done(res => {
           console.log(res);
-          this.spinShow = false;
-          this.$Message.success("Diagrama Salvo!");
           this.diagramID = res._id;
           if(generate==true){
-            this.generateCode(this.diagramID)
+            if(download==false){
+              this.generateCode(this.diagramID, download, 'codetoview')
+            }else{
+              this.generateCode(this.diagramID, download)
+            }
+            
           }
         })
         .fail(errorReport => {
-          this.spinShow = false;
           console.log(errorReport);
         });
     },
@@ -176,6 +256,7 @@ export default {
     }
   },
   mounted() {
+    this.autoUpdate()
     this.$ = go.GraphObject.make;
     this.diagram = new go.Diagram("myDiagramDiv");
     this.diagram.initialContentAlignment = go.Spot.Center;
@@ -765,10 +846,10 @@ export default {
         linkTemplateMap: diagram.linkTemplateMap,
         model: new go.GraphLinksModel([
           // specify the contents of the Palette
-          { category: "resource", key: "resource" },
-          { category: "task", key: "task" },
-          { category: "quality", key: "quality" },
-          { category: "goal", key: "goal" },
+          { category: "resource", key: "resource", text: "Resource"},
+          { category: "task", key: "task", text: "Task"},
+          { category: "quality", key: "quality", text: "Quality" },
+          { category: "goal", key: "goal", text: "Goal" },
           { key: "actor", isGroup: true, category: "actor", text: "Actor" },
           {
             key: "role",
@@ -797,6 +878,11 @@ export default {
       diagram.commitTransaction("add link data");
       linkType = "";
     });
+    var x = this
+    diagram.addDiagramListener("ChangedSelection", (x) => {
+      console.log(x)
+    });
+
     if (this.propDiagram) {
       console.log(this.propDiagram.diagram);
       this.titulo = this.propDiagram.title;
@@ -825,5 +911,43 @@ li {
 
 a {
   color: #42b983;
+}
+
+.grid-container-not-show{
+  height: 700px;
+  display: grid;
+  grid-template-columns: 99% 1%;
+}
+
+.grid-container-show {
+  height: 700px;
+  display: grid;
+  grid-template-columns: 60% 40%;
+}
+
+.grid-container2 {
+  height: 700px;
+  display: grid;
+  grid-template-columns: 3% 97%;
+}
+
+.grid-item {
+  height: 700px;
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  font-size: 14px;
+  text-align: center;
+}
+.grid-item2 {
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  font-size: 30px;
+  text-align: center;
+}
+
+.grid-item3 {
+  font-size: 10px;
+}
+.CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
 }
 </style>
