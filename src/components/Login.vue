@@ -113,6 +113,11 @@ export default {
         }
       })
     }
+  },
+  mounted() {
+    if (this.$store.state.user.email){
+      this.$router.push('/dashboard')
+    }
   }
 }
 </script>

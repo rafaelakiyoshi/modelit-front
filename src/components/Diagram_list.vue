@@ -1,12 +1,13 @@
 <template>
   <div id="diagram_list">
+    <h1 v-if="noneDiagram" >Nenhum Diagrama encontrado...</h1>
+     <Spin fix v-if="loading"><Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon><div>Loading</div></Spin>
         <div hidden style="border: solid 0px black; width: 0%; height: 0px; margin-top: 3px" id="myDiagram">
         </div>
     <Row type="flex" style="text-align:center vertical-align: middle;">
       <Col align="center" v-for="(diagram, index) in my_Diagrams" :key="index" span="6" style="text-align:center vertical-align: middle;">
         <a @click="acessDiagram(diagram)"><Card  align="center" style="width:400px; margin-bottom: 25px; margin-top: 25px;">
           <h2 style="color:black;" align="left" slot="title">{{diagram.title}}</h2>
-          <p style="color:grey; font-weight:normal;" align="left" slot="title">{{diagram.desc}}</p>
           <a style="color:red;" href="#" slot="extra" @click.prevent="excludeDiagram(diagram)">
             <Icon type="trash-a"></Icon>
             Excluir
@@ -27,6 +28,8 @@ export default {
   name: "diagram_list",
   data (){
     return {
+      noneDiagram: false,
+      loading: true,
       svg: [],
       $: null,
       spinShow: false,
@@ -48,6 +51,22 @@ vuex: {
     }
   },
   methods: {
+    instance () {
+      const title = 'Nenhum Diagrama encontrado...';
+      const content = '<p>Deseja prosseguir para criar seu primeiro diagrama?</p>';
+      this.$Modal.confirm({
+        title: title,
+        content: content,
+        okText: 'Criar Diagrama',
+        cancelText: 'Cancel',
+        onOk: () => {
+          this.$router.push('/iStar');
+        },
+        onCancel: () => {
+          
+        }
+      })
+    },
     acessDiagram(diagram){
       this.$router.push({name: 'istar', params: {propDiagram:diagram}})
     },
@@ -56,6 +75,7 @@ vuex: {
     }
   },
   mounted() {
+    
     this.$ = go.GraphObject.make
     this.diagram = new go.Diagram('myDiagram')
     this.diagram.initialContentAlignment = go.Spot.Center
@@ -415,6 +435,7 @@ vuex: {
       })
       .done((res) => {
         this.my_Diagrams = res
+        this.loading = false
         for(var index in this.my_Diagrams){
           this.diagram.model = go.Model.fromJson(this.my_Diagrams[index].json)
           this.formItem.json = ''
@@ -422,8 +443,13 @@ vuex: {
           this.svg[index] = this.diagram.makeImage({size: new go.Size(350,100)}).getAttribute("src")
           console.log('HAHAH', this.svg)
         }
+        if(this.svg.length == 0){
+          this.instance('warning')
+        }
       })
       .fail((errorReport) => {
+        console.log('fail')
+        this.loading = false
         console.log(errorReport)
       })
   }
@@ -432,5 +458,17 @@ vuex: {
 
 
 <style>
-
+  .demo-spin-icon-load{
+    animation: ani-demo-spin 1s linear infinite;
+  }
+  @keyframes ani-demo-spin {
+    from { transform: rotate(0deg);}
+    50%  { transform: rotate(180deg);}
+    to   { transform: rotate(360deg);}
+    }
+  .demo-spin-col{
+    height: 100px;
+    position: relative;
+    border: 1px solid #eee;
+  }
 </style>

@@ -1,37 +1,16 @@
 <template>
   <div class="istar">
-  <Modal
-        v-model="modal6"
-        title="Importar JSON"
-        :loading="loading"
-        @on-ok="asyncOK">
-        <Form :model="formItem">
-          <Form-item>
-            <Input v-model="formItem.json" type="textarea" :autosize="{minRows: 8,maxRows: 15}" placeholder="Cole aqui o seu JSON..."></Input>
-          </Form-item>
-        </Form>
-    </Modal>
-
-    <Modal
-          v-model="modalExport"
-          title="JSON"
-          @on-cancel="close"
-          @on-ok="close">
-          <Form :model="formItem">
-            <Form-item>
-              <Input v-model="json" type="textarea" :autosize="{minRows: 8,maxRows: 15}" readonly></Input>
-            </Form-item>
-          </Form>
-      </Modal>
+    <Spin v-if="saving" fix><Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon><div>{{loadingMessage}}</div></Spin>
+    <Button @click="handleRender" type="ghost" long><h1>{{titulo}}</h1></Button>
 <div id="SVGArea"></div>
-  <div @click="titleEdit=false, descEdit=false" style="width:100%; white-space:nowrap;">
+  <div style="width:100%; white-space:nowrap;">
     <div id="myPaletteDiv" style="border: solid 1px black; width: 100%; height: 90px"></div>
    
   <div id="description">
   </div>
   </div>
 
-  <div :class="classGrid" v-if="show">
+  <div :class="classGrid" v-if="show" disabled>
     <div class="grid-item2" @click="autoUpdate()" id="myDiagramDiv"></div>
       <div class="grid-item">
         <div class="grid-container2">
@@ -43,7 +22,7 @@
               <codemirror class="CodeMirror" v-if="true" style="height: auto; width:100%;" align="left" v-model="codeModels" :options="cmOptions"></codemirror>
               <h4>Controladoras</h4>
               <codemirror class="CodeMirror" v-if="true" style="height: auto; width:100%;" align="left" v-model="codeControllers" :options="cmOptions"></codemirror>
-              <Button @click="saveDiagram(true)" type="ghost" style="margin-top:6px" small long >Gerar Código</Button>
+              <Button @click="saveDiagram(true, true)" type="ghost" style="margin-top:6px" small long >Gerar Código</Button>
             </div>
             <!-- <codemirror v-if="true" style="height: auto; width:100%;" align="left" v-model="code" :options="cmOptions"></codemirror> -->
         </div> 
@@ -55,7 +34,6 @@
    <div class="grid-item" @click="autoUpdate()" id="myDiagramDiv"></div>
     <div class="grid-item3">
       <button @click="changeShowCode(true)" style="height: 100%; width:100%;">{{showCode}}</button>
-      dwdqwdwdw
       </div>
   </div>
 <Button @click="saveDiagram()" type="ghost" long>Salvar</Button>
@@ -85,6 +63,7 @@ export default {
   data() {
     return {
       diagramCanvas: '',
+      saving: false,
       show: false,
       showCode: '<',
       codeModels: '',
@@ -117,13 +96,30 @@ export default {
       modalExport: false,
       loading: true,
       titulo: "titulo...",
-      desc: "descrição..."
     };
   },
   components: {
     codemirror
   },
   methods: {
+    handleRender () {
+      this.$Modal.confirm({
+        render: (h) => {
+          return h('Input', {
+            props: {
+              value: this.titulo,
+              autofocus: true,
+              placeholder: this.titulo,
+            },
+            on: {
+              input: (val) => {
+                  this.titulo = val;
+              }
+            }
+          })
+        }
+      })
+    },
     autoUpdate: debounce(function (e) {
       console.log('aee')
       var diagram = {
@@ -188,11 +184,16 @@ export default {
         });
     },
     saveDiagram(generate=false, download) {
+      if(download){
+        this.loadingMessage = 'Gerando o Código...'
+      } else {
+        this.loadingMessage = 'Salvando...'
+      }
+      this.saving = true
       console.log('SAVEDIAGRAM: ', generate, download)
       var diagramID;
       let diagram = {
         title: this.titulo,
-        desc: this.desc,
         json: this.diagram.model.toJson(),
         emailOwner: this.$store.getters.returnUser.email
       };
@@ -219,6 +220,7 @@ export default {
             }
             
           }
+          this.saving = false
         })
         .fail(errorReport => {
           console.log(errorReport);
@@ -886,7 +888,6 @@ export default {
     if (this.propDiagram) {
       console.log(this.propDiagram.diagram);
       this.titulo = this.propDiagram.title;
-      this.desc = this.propDiagram.desc;
       this.diagram.model = go.Model.fromJson(this.propDiagram.json);
     }
   }
@@ -950,4 +951,17 @@ a {
   border: 1px solid #eee;
   height: auto;
 }
+.demo-spin-icon-load{
+        animation: ani-demo-spin 1s linear infinite;
+    }
+    @keyframes ani-demo-spin {
+        from { transform: rotate(0deg);}
+        50%  { transform: rotate(180deg);}
+        to   { transform: rotate(360deg);}
+    }
+    .demo-spin-col{
+        height: 100px;
+        position: relative;
+        border: 1px solid #eee;
+    }
 </style>
