@@ -29,7 +29,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://' + ( process.env.APIHOST || 'localhost' ) + (process.env.PORT || ':3000'),
+        // target: 'http://' + ( process.env.APIHOST || 'localhost' ) + (process.env.PORT || ':3000'),
+        target: 'https://modelit-db.herokuapp.com',
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
