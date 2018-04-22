@@ -16,7 +16,7 @@
         <div class="grid-container2">
           <div class="grid-item3"><button @click="changeShowCode(false)" style="height: 100%; width:100%;">{{showCode}}</button></div>
           <div class="grid-item">
-            <div class="CodeMirror">
+                <div class="CodeMirror">
 
               <h4>Modelos</h4>
               <codemirror class="CodeMirror" v-if="true" style="height: auto; width:100%;" align="left" v-model="codeModels" :options="cmOptions"></codemirror>
@@ -24,6 +24,7 @@
               <codemirror class="CodeMirror" v-if="true" style="height: auto; width:100%;" align="left" v-model="codeControllers" :options="cmOptions"></codemirror>
               <Button @click="saveDiagram(true, true)" type="ghost" style="margin-top:6px" small long >Gerar Código</Button>
             </div>
+            
             <!-- <codemirror v-if="true" style="height: auto; width:100%;" align="left" v-model="code" :options="cmOptions"></codemirror> -->
         </div> 
       </div>  
@@ -31,7 +32,7 @@
 </div>
 
   <div :class="classGrid" v-if="!show">
-   <div class="grid-item" @click="autoUpdate()" id="myDiagramDiv"></div>
+   <div class="grid-item" @click="autoUpdate()" id="myDiagramDiv" style="border: solid 1px black; width: 100%; height: 100%px"></div>
     <div class="grid-item3">
       <button @click="changeShowCode(true)" style="height: 100%; width:100%;">{{showCode}}</button>
       </div>
@@ -126,7 +127,7 @@ export default {
         json: this.diagram.model.toJson(),
       };
       oboe({
-        url: `https://modelit-db.herokuapp.com/codetoview`,
+        url: `/api/codetoview`,
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -139,7 +140,6 @@ export default {
           this.codeModels = res.models
           this.codeControllers = res.controllers
           console.log('HOHOHO ',res);
-          
         })
         .fail(errorReport => {
           console.log(errorReport);
@@ -161,7 +161,7 @@ export default {
       console.log('SAVEDIgenerateCodeAGRAM: ', id, download, url)
       console.log("ID AQUI", id);
       oboe({
-        url: `https://modelit-db.herokuapp.com/${url}/${id}`,
+        url: `/api/${url}/${id}`,
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -170,7 +170,7 @@ export default {
         .done(res => {
           if(download==true){
             let link = document.createElement('a')
-            link.href = (`https://modelit-db.herokuapp.com/code/${id}`)
+            link.href = (`/api/code/${id}`)
             link.download = 'code'
             link.click()
           } else {
@@ -199,7 +199,7 @@ export default {
       };
       console.log(this.$store.getters.returnUser, diagram);
       oboe({
-        url: `https://modelit-db.herokuapp.com/diagram`,
+        url: `/api/diagram`,
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -436,7 +436,7 @@ export default {
         fromLinkableDuplicates: true,
         toLinkable: true,
         toLinkableDuplicates: true,
-        cursor: "pointer",
+        // cursor: "pointer",
         fill: "rgb(193,255,193)",
         width: 80,
         height: 40,
@@ -618,7 +618,11 @@ export default {
           text: "Resource"
         },
         new go.Binding("text").makeTwoWay()
-      )
+      ),
+      
+       $(go.Shape, "IrritationHazard",
+          { desiredSize: new go.Size(12, 12), fill: "black", alignment: new go.Spot(1, 0, -2, 2), opacity: 0.0 },
+          new go.Binding("opacity", "XLine", function(v) { return v ? 1.0 : 0.0; }))
     );
 
     diagram.linkTemplateMap.add(

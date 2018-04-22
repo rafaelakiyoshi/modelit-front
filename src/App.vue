@@ -90,7 +90,7 @@ vuex: {
 }
 .app-ceiling {
   background: #77A38C;
-  padding: 10px 0;
+  padding: 0px 0;
   overflow: hidden;
 }
 .app-ceiling-main {
