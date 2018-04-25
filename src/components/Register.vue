@@ -106,7 +106,7 @@ export default {
         if (valid) {
           this.spinShow = true;
           oboe({
-            url: `/api/user`,
+            url: `https://modelit-db.herokuapp.com/user`,
             method: "POST",
             headers: {
               "Content-Type": "application/json"
