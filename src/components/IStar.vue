@@ -127,7 +127,7 @@ export default {
         json: this.diagram.model.toJson(),
       };
       oboe({
-        url: `https://modelit-db.herokuapp.com/codetoview`,
+        url: `/api/codetoview`,
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -161,7 +161,7 @@ export default {
       console.log('SAVEDIgenerateCodeAGRAM: ', id, download, url)
       console.log("ID AQUI", id);
       oboe({
-        url: `https://modelit-db.herokuapp.com/${url}/${id}`,
+        url: `/api/${url}/${id}`,
         method: "GET",
         headers: {
           "Content-Type": "application/json"
@@ -170,7 +170,7 @@ export default {
         .done(res => {
           if(download==true){
             let link = document.createElement('a')
-            link.href = (`https://modelit-db.herokuapp.com/code/${id}`)
+            link.href = (`/api/code/${id}`)
             link.download = 'code'
             link.click()
           } else {
@@ -199,7 +199,7 @@ export default {
       };
       console.log(this.$store.getters.returnUser, diagram);
       oboe({
-        url: `https://modelit-db.herokuapp.com/diagram`,
+        url: `/api/diagram`,
         method: "POST",
         headers: {
           "Content-Type": "application/json"

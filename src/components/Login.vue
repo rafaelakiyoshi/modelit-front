@@ -70,7 +70,7 @@ export default {
     tryLogin () {
       console.log('TENTANDO LOGAR')
       oboe({
-        url: `https://modelit-db.herokuapp.com/user/${this.formInline.user}`,
+        url: `/api/user/${this.formInline.user}`,
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
