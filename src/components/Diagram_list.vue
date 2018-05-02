@@ -427,7 +427,7 @@ vuex: {
           templmap.add("", diagram.nodeTemplate);
           diagram.nodeTemplateMap = templmap;
     oboe({
-        url: `/api/listdiagrams/${this.$store.state.user.email}`,
+        url: `https://modelit-db.herokuapp.com/listdiagrams/${this.$store.state.user.email}`,
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
