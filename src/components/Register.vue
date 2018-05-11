@@ -2,6 +2,7 @@
 <div id="register">
   <Card>
      <h2 style="color:black;" slot="title">Criação de Conta</h2>
+     <h2 style="color:black;" slot="title">Não utilize suas informações oficiais de contas. Crie uma conta fictícia!</h2>
     <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
         <FormItem prop="user">
             <Input type="text" v-model="formInline.user" placeholder="Username" style="width: 500px">

@@ -1,7 +1,22 @@
 <template>
   <div class="istar">
+    <Modal
+        v-model="modalInformacao"
+        title="Atenção!"
+        @on-ok="ok"
+        @on-cancel="cancel">
+        <p>Por favor, após fazer o uso da aplicação, ajude respondendo o questionário disposto no Menu Principal ou clicando em SALVAR DIAGRAMA</p>
+    </Modal>
+    <Modal
+        v-model="modalQuestionario"
+        title="Responda o questionário Por Favor...."
+        @on-ok="okQuestionario"
+        @on-cancel="cancelQuestionario">
+        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdYiiHN1YGUXRcWueSa0EMyt76LwwZuTvgQD6ttUaa7yQ1tpg/viewform?embedded=true" width="500" height="520" frameborder="0" marginheight="0" marginwidth="0">Carregando…</iframe>
+    </Modal>
     <Spin v-if="saving" fix><Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon><div>{{loadingMessage}}</div></Spin>
     <Button @click="handleRender" type="ghost" long><h1>{{titulo}}</h1></Button>
+    <Button @click="modalQuestionario=true" type="ghost" long>SALVAR DIAGRAMA</Button>
 <div id="SVGArea"></div>
   <div style="width:100%; white-space:nowrap;">
     <div id="myPaletteDiv" style="border: solid 1px black; width: 100%; height: 90px"></div>
@@ -37,7 +52,7 @@
       <button @click="changeShowCode(true)" style="height: 100%; width:100%;">{{showCode}}</button>
       </div>
   </div>
-<Button @click="saveDiagram()" type="ghost" long>Salvar</Button>
+
         <!-- <Col span="6" offset="4"><Button @click="saveDiagram(true)" type="success" long >Gerar Código</Button></Col> -->
 
       <Spin size="large" fix v-if="spinShow"></Spin>
@@ -63,7 +78,8 @@ export default {
   props: ["propDiagram"],
   data() {
     return {
-      diagramCanvas: '',
+      modalInformacao: true,
+      modalQuestionario: false,
       saving: false,
       show: false,
       showCode: '<',
@@ -103,6 +119,10 @@ export default {
     codemirror
   },
   methods: {
+    okQuestionario() {
+      this.modalQuestionario = false
+      this.saveDiagram()
+    },
     handleRender () {
       this.$Modal.confirm({
         render: (h) => {

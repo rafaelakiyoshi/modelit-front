@@ -1,7 +1,15 @@
 <template>
   <div id="app">
+    <Modal
+        v-model="modalQuestionario"
+        title="Responda o questionário Por Favor...."
+        @on-ok="okQuestionario"
+        @on-cancel="cancelQuestionario">
+        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdYiiHN1YGUXRcWueSa0EMyt76LwwZuTvgQD6ttUaa7yQ1tpg/viewform?embedded=true" width="500" height="520" frameborder="0" marginheight="0" marginwidth="0">Carregando…</iframe>
+    </Modal>
        <div v-if="isStore()" class="app-ceiling">
            <div class="app-ceiling-main">
+              <a @click="modalQuestionario=true">RESPONDER QUESTIONÁRIO</a> |
                <a @click="router('/dashboard')">Início</a> |
                <a @click="router('/mydriagrams')">Meus Diagramas</a> |
                <a @click="router('/istar')">Novo Diagrama</a> |
@@ -24,6 +32,11 @@
 <script>
 export default {
   name: "app",
+  data(){
+    return {
+      modalQuestionario: false,
+    }
+  },
 vuex: {
     getters: {
       user: store => store.user
