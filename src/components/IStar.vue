@@ -1,22 +1,40 @@
 <template>
   <div class="istar">
     <Modal
-        v-model="modalInformacao"
-        title="Atenção!"
-        @on-ok="ok"
-        @on-cancel="cancel">
-        <p>Por favor, após fazer o uso da aplicação, ajude respondendo o questionário disposto no Menu Principal ou clicando em SALVAR DIAGRAMA</p>
-    </Modal>
-    <Modal
         v-model="modalQuestionario"
         title="Responda o questionário Por Favor...."
         @on-ok="okQuestionario"
         @on-cancel="cancelQuestionario">
         <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdYiiHN1YGUXRcWueSa0EMyt76LwwZuTvgQD6ttUaa7yQ1tpg/viewform?embedded=true" width="500" height="520" frameborder="0" marginheight="0" marginwidth="0">Carregando…</iframe>
     </Modal>
+    <Row>
+        <Col span="18" push="5">
+                  <div style="text-align: left;">
+      <Tooltip content="Salvar Diagrama" placement="bottom">
+        <Button @click="saveDiagram()" size="large" type="text"><i style="font-size:22px" class="fa">&#xf0c7;</i></Button>
+      </Tooltip>
+      <Tooltip content="Baixar Imagem" placement="bottom">
+        <Button @click="makeBlob()" size="large" type="text"><i style="font-size:22px" class="fa">&#xf1c5;</i></Button>
+      </Tooltip>
+      <Tooltip content="Baixar Código" placement="bottom">
+        <Button @click="saveDiagram(true, true)" size="large" type="text"><i style="font-size:22px" class="fa">&#xf121;</i></Button>
+      </Tooltip>
+      <Tooltip content="Ctrl + Z" placement="bottom">
+        <Button size="large" type="text"><i style="font-size:22px" class="fa">&#xf0e2;</i></Button>
+      </Tooltip>
+      <Tooltip content="Ctrl + Y" placement="bottom">
+        <Button size="large" type="text"><i style="font-size:22px" class="fa">&#xf01e;</i></Button>
+      </Tooltip>
+    </div>
+        </Col>
+        <Col span="6" pull="19">
+        <Button @click="handleRender" type="ghost" long><h2>{{titulo}}</h2></Button>
+
+        </Col>
+    </Row>
+    
     <Spin v-if="saving" fix><Icon type="load-c" size=18 class="demo-spin-icon-load"></Icon><div>{{loadingMessage}}</div></Spin>
-    <Button @click="handleRender" type="ghost" long><h1>{{titulo}}</h1></Button>
-    <Button @click="modalQuestionario=true" type="ghost" long>SALVAR DIAGRAMA</Button>
+    
 <div id="SVGArea"></div>
   <div style="width:100%; white-space:nowrap;">
     <div id="myPaletteDiv" style="border: solid 1px black; width: 100%; height: 90px"></div>
@@ -26,28 +44,29 @@
   </div>
 
   <div :class="classGrid" v-if="show" disabled>
-    <div class="grid-item2" @click="autoUpdate()" id="myDiagramDiv"></div>
+    <div v-if="show" class="grid-item2" @click="autoUpdate()" id="myDiagramDiv"></div>
       <div class="grid-item">
         <div class="grid-container2">
           <div class="grid-item3"><button @click="changeShowCode(false)" style="height: 100%; width:100%;">{{showCode}}</button></div>
           <div class="grid-item">
-                <div class="CodeMirror">
-
-              <h4>Modelos</h4>
-              <codemirror class="CodeMirror" v-if="true" style="height: auto; width:100%;" align="left" v-model="codeModels" :options="cmOptions"></codemirror>
-              <h4>Controladoras</h4>
-              <codemirror class="CodeMirror" v-if="true" style="height: auto; width:100%;" align="left" v-model="codeControllers" :options="cmOptions"></codemirror>
+            <Tabs value="name1">
+              <TabPane class="code"  label="Modelos" name="name1">
+                <codemirror v-if="true" style="height: auto; width:100%;" align="left" v-model="codeModels" :options="cmOptions"></codemirror>
+              </TabPane>
+              <TabPane label="Controladoras" name="name2">
+                <codemirror class="CodeMirror" v-if="true" style="height: auto; width:100%;" align="left" v-model="codeControllers" :options="cmOptions"></codemirror>
+              </TabPane>
+            </Tabs>
+              <div class="CodeMirror">
               <Button @click="saveDiagram(true, true)" type="ghost" style="margin-top:6px" small long >Gerar Código</Button>
             </div>
-            
-            <!-- <codemirror v-if="true" style="height: auto; width:100%;" align="left" v-model="code" :options="cmOptions"></codemirror> -->
         </div> 
       </div>  
     </div>
 </div>
 
   <div :class="classGrid" v-if="!show">
-   <div class="grid-item" @click="autoUpdate()" id="myDiagramDiv" style="border: solid 1px black; width: 100%; height: 100%px"></div>
+   <div v-if="!show" class="grid-item" @click="autoUpdate()" id="myDiagramDiv" style="border: solid 1px black; width: 100%; height: 100%px"></div>
     <div class="grid-item3">
       <button @click="changeShowCode(true)" style="height: 100%; width:100%;">{{showCode}}</button>
       </div>
@@ -73,6 +92,7 @@ import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/python/python.js'
 // theme css
 import 'codemirror/theme/base16-light.css'
+import 'codemirror/theme/monokai.css'
 export default {
   name: "istar",
   props: ["propDiagram"],
@@ -81,19 +101,19 @@ export default {
       modalInformacao: true,
       modalQuestionario: false,
       saving: false,
-      show: false,
-      showCode: '<',
+      show: true,
+      showCode: '>',
       codeModels: '',
       codeControllers: '',
-      classGrid: 'grid-container-not-show',
+      classGrid: 'grid-container-show',
       cmOptions: {
         // codemirror option
-        height: '800px',
+        height: '600px',
         tabSize: 4,
         mode: 'text/x-python',
         lineNumbers: true,
         line: true,
-        viewportMargin: Infinity
+        theme: 'default'
         // more codemirror options, 更多 codemirror 的高级配置...
       },
       diagramID: null,
@@ -119,6 +139,31 @@ export default {
     codemirror
   },
   methods: {
+    myCallback(blob) {
+    var url = window.URL.createObjectURL(blob);
+    var filename = "myBlobFile.png";
+
+    var a = document.createElement("a");
+    a.style = "display: none";
+    a.href = url;
+    a.download = filename;
+
+    // IE 11
+    if (window.navigator.msSaveBlob !== undefined) {
+      window.navigator.msSaveBlob(blob, filename);
+      return;
+    }
+
+    document.body.appendChild(a);
+    requestAnimationFrame(function() {
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    });
+  },
+    makeBlob() {
+      var blob = this.diagram.makeImageData( { background: "white", returnType: "blob", callback: this.myCallback });
+    },
     okQuestionario() {
       this.modalQuestionario = false
       this.saveDiagram()
@@ -452,11 +497,11 @@ export default {
         strokeWidth: 1,
         portId: "",
         fromLinkable: true,
-        fromLinkableSelfNode: true,
+        fromLinkableSelfNode: false,
         fromLinkableDuplicates: true,
         toLinkable: true,
         toLinkableDuplicates: true,
-        // cursor: "pointer",
+        cursor: "pointer",
         fill: "rgb(193,255,193)",
         width: 80,
         height: 40,
@@ -941,7 +986,7 @@ a {
 .grid-container-not-show{
   height: 700px;
   display: grid;
-  grid-template-columns: 99% 1%;
+  grid-template-columns: 98.2% 1.8%;
 }
 
 .grid-container-show {
@@ -953,7 +998,7 @@ a {
 .grid-container2 {
   height: 700px;
   display: grid;
-  grid-template-columns: 3% 97%;
+  grid-template-columns: 4% 96%;
 }
 
 .grid-item {
@@ -971,9 +1016,10 @@ a {
 .grid-item3 {
   font-size: 10px;
 }
-.CodeMirror {
+.code .CodeMirror {
   border: 1px solid #eee;
-  height: auto;
+  height: 600px;
+  background-color: #0000;
 }
 .demo-spin-icon-load{
         animation: ani-demo-spin 1s linear infinite;
@@ -988,4 +1034,10 @@ a {
         position: relative;
         border: 1px solid #eee;
     }
+
+.my-icon {
+  width: 100px;
+  height: 100px;
+  background-size: 100% 100%;
+}
 </style>

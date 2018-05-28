@@ -9,11 +9,11 @@
     </Modal>
        <div v-if="isStore()" class="app-ceiling">
            <div class="app-ceiling-main">
-              <a @click="modalQuestionario=true">RESPONDER QUESTIONÁRIO</a> |
-               <a @click="router('/dashboard')">Início</a> |
-               <a @click="router('/mydriagrams')">Meus Diagramas</a> |
-               <a @click="router('/istar')">Novo Diagrama</a> |
-               <a @click="logout()">Logout</a>
+              <a @click="modalQuestionario=true">RESPONDER QUESTIONÁRIO      </a> |
+               <a @click="router('/dashboard')">Início      </a> |
+               <a @click="router('/mydriagrams')">Meus Diagramas      </a> |
+               <a @click="router('/istar')">Novo Diagrama      </a> |
+               <a @click="logout()">Logout      </a>
            </div>
        </div>
        <div class="app-header">
@@ -103,7 +103,7 @@ vuex: {
 }
 .app-ceiling {
   background: #77A38C;
-  padding: 0px 0;
+  padding: 10px 0;
   overflow: hidden;
 }
 .app-ceiling-main {
@@ -112,6 +112,9 @@ vuex: {
 }
 .app-ceiling-main a {
   color: #ffff;
+  font-size: 15px;
+  padding-right: 5px;
+  padding-left: 5px;
 }
 body,
 html {
